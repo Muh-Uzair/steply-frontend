@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   DropdownMenu,
@@ -9,12 +11,19 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Files, FilePlus, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import SteplyLogo from "./SteplyLogo";
+import { navItems } from "@/lib/constants";
+import { INavItem } from "@/types/constants-types";
+import { usePathname } from "next/navigation";
 
 const Header: React.FC = () => {
   // VARS
+  const navArr: INavItem[] = navItems;
+  const pathname = usePathname();
+
+  console.log(pathname);
 
   // FUNCTIONS
 
@@ -33,22 +42,23 @@ const Header: React.FC = () => {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link href={"/all-forms"}>
-                <DropdownMenuItem>
-                  All Forms
-                  <DropdownMenuShortcut>
-                    <Files />
-                  </DropdownMenuShortcut>
-                </DropdownMenuItem>
-              </Link>
-              <Link href={"/new-form"}>
-                <DropdownMenuItem>
-                  New Form
-                  <DropdownMenuShortcut>
-                    <FilePlus />
-                  </DropdownMenuShortcut>
-                </DropdownMenuItem>
-              </Link>
+              {navArr.map((val, i) => {
+                const IconComponent = val.navIcon;
+                return (
+                  <Link key={i} href={val.navUrl}>
+                    <DropdownMenuItem
+                      className={`${
+                        pathname === val.navUrl ? "bg-stone-200/70" : ""
+                      }`}
+                    >
+                      {val.navLabel}
+                      <DropdownMenuShortcut>
+                        <IconComponent className="text-primary" />
+                      </DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                  </Link>
+                );
+              })}
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
