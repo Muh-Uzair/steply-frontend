@@ -15,7 +15,11 @@ const AppLayout: React.FC<Props> = ({ children }) => {
   return (
     <div>
       <Header />
-      <main className="tab:pl-[80px] laptopM:pl-[200px]">{children}</main>
+      <main className="tab:pl-[80px] laptopM:pl-[200px] flex justify-center">
+        <div className=" px-[10px] tab:px-[50px] laptopM:px-0 laptopM:max-w-[1200px]  w-full">
+          {children}
+        </div>
+      </main>
       <Sidebar />
     </div>
   );

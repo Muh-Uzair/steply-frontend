@@ -1,3 +1,4 @@
+import NewForm from "@/pages/new-form-page/index";
 import React from "react";
 
 const Page: React.FC = () => {
@@ -6,7 +7,7 @@ const Page: React.FC = () => {
   // FUNCTIONS
 
   // JSX
-  return <div>new form</div>;
+  return <NewForm />;
 };
 
 export default Page;

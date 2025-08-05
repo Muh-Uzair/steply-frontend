@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import roboto from "@/public/fonts/roboto/roboto";
 import React from "react";
 import AppLayout from "@/components/AppLayout";
+import ReduxProvider from "@/providers/ReduxProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="light">
       <body className={roboto.variable}>
-        <AppLayout>{children}</AppLayout>
+        <ReduxProvider>
+          <AppLayout>{children}</AppLayout>
+        </ReduxProvider>
       </body>
     </html>
   );

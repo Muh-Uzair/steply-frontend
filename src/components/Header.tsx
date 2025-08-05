@@ -23,8 +23,6 @@ const Header: React.FC = () => {
   const navArr: INavItem[] = navItems;
   const pathname = usePathname();
 
-  console.log(pathname);
-
   // FUNCTIONS
 
   // JSX
