@@ -6,6 +6,9 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { incrementStep, decrementStep } from "@/store/slices/new-form-slice";
 import { AppDispatch, RootState } from "@/store";
+import NewFormForm from "./NewFormForm";
+import FormProgress from "./FormProgress";
+import FormStepNum from "./FormStepNum";
 
 const NewForm: React.FC = () => {
   // VARS
@@ -18,17 +21,14 @@ const NewForm: React.FC = () => {
 
   // JSX
   return (
-    <div>
-      <section className="flex w-full justify-center items-center p-[30px]">
-        <div className="w-[50px] h-[50px] flex justify-center items-center rounded-full bg-primary/30">
-          <span className="text-primary text-3xl font-extrabold">{step}</span>
-        </div>
-      </section>
-      <section>progress bars</section>
-      <section>form</section>
+    <div className="flex-col space-y-4 laptopM:w-[800px] w-full">
+      <FormStepNum step={step} />
+      <FormProgress step={step} />
+      <NewFormForm step={step} />
       <section className="flex justify-end tab:justify-between items-center">
         <div className="hidden tab:inline">
-          You&apos;re currently at step {step}
+          You&apos;re currently at step{" "}
+          <span className="font-bold text-primary">{step} </span>
         </div>
         <div className="flex gap-2">
           <Button onClick={handlePrev} disabled={step === 1}>
