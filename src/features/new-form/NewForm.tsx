@@ -22,20 +22,31 @@ const NewForm: React.FC = () => {
   // JSX
   return (
     <div className="flex-col space-y-4 laptopM:w-[800px] w-full">
+      <section>
+        <span className="font-bold text-2xl">Fill up the form</span>
+      </section>
       <FormStepNum step={step} />
       <FormProgress step={step} />
       <NewFormForm step={step} />
-      <section className="flex justify-end tab:justify-between items-center">
-        <div className="hidden tab:inline">
+      <section className="flex justify-end tab:justify-between items-center my-[40px]">
+        <div className="hidden tab:inline align-bottom h-full ">
           You&apos;re currently at step{" "}
-          <span className="font-bold text-primary">{step} </span>
+          <span className="font-bold text-primary"> {step} </span>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={handlePrev} disabled={step === 1}>
+        <div className="flex gap-4">
+          <Button
+            onClick={handlePrev}
+            variant={"outline"}
+            disabled={step === 1}
+          >
             <ArrowLeft size={20} />
             Prev
           </Button>
-          <Button onClick={handleNext} disabled={step === 6}>
+          <Button
+            variant={"outline"}
+            onClick={handleNext}
+            disabled={step === 6}
+          >
             Next
             <ArrowRight size={20} />
           </Button>

@@ -11,7 +11,7 @@ const FormStepNum: React.FC<Props> = ({ step }) => {
 
   // JSX
   return (
-    <section className="flex w-full justify-center items-center p-[30px]">
+    <section className="flex w-full justify-center items-center p-[10px]">
       <div className="w-[50px] h-[50px] flex justify-center items-center rounded-full bg-primary/30">
         <span className="text-primary text-3xl font-extrabold">{step}</span>
       </div>
