@@ -9,9 +9,23 @@ const initialState: INewFormSlice = {
     confirmPassword: "",
     gender: "Male",
     dob: null,
+
     phoneNum: "",
+    alternatePhoneNum: "",
+    addressLine1: "",
+    addressLine2: "",
+    country: "",
+    city: "",
+    postalCode: "",
+
     currentJobTitle: "",
+    employmentStatus: "Unemployed",
+    companyName: "",
+    yearsOfExperience: 0,
+    resume: null,
+
     monthlyIncome: 0,
+
     preferredContact: "Email",
   },
 };
@@ -42,12 +56,33 @@ const newFormSlice = createSlice({
       const date: Date | undefined = new Date(action.payload.dob);
       state.formData.dob = date ? new Date(date).toISOString() : null;
     },
+
     phoneNum: (state, action) => {
       state.formData.phoneNum = action.payload.phoneNum;
     },
+    alternatePhoneNum: (state, action) => {
+      state.formData.alternatePhoneNum = action.payload.alternatePhoneNum;
+    },
+    addressLine1: (state, action) => {
+      state.formData.addressLine1 = action.payload.addressLine1;
+    },
+    addressLine2: (state, action) => {
+      state.formData.addressLine2 = action.payload.addressLine2;
+    },
+
     currentJobTitle: (state, action) => {
       state.formData.currentJobTitle = action.payload.currentJobTitle;
     },
+    employmentStatus: (state, action) => {
+      state.formData.employmentStatus = action.payload.employmentStatus;
+    },
+    companyName: (state, action) => {
+      state.formData.companyName = action.payload.companyName;
+    },
+    yearsOfExperience: (state, action) => {
+      state.formData.yearsOfExperience = action.payload.yearsOfExperience;
+    },
+
     monthlyIncome: (state, action) => {
       state.formData.monthlyIncome = Number(action.payload.monthlyIncome);
     },
@@ -65,8 +100,17 @@ export const {
   confirmPassword,
   gender,
   setDob,
+
   phoneNum,
+  alternatePhoneNum,
+  addressLine1,
+  addressLine2,
+
   currentJobTitle,
+  employmentStatus,
+  companyName,
+  yearsOfExperience,
+
   monthlyIncome,
   preferredContact,
 } = newFormSlice.actions;

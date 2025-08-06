@@ -28,9 +28,12 @@ export const validationGender = {
   required: "Please select your gender",
 };
 
+export const validationDob = {
+  required: "Please select your date of birth",
+};
+
 // DIVIDER
 export const validationPhoneNum = {
-  required: "Phone number is required",
   minLength: {
     value: 10,
     message: "Phone number must be at least 10 digits",
@@ -46,9 +49,19 @@ export const validationPhoneNum = {
   },
 };
 
+export const validationAddress = {
+  minLength: {
+    value: 3,
+    message: "Full name must be at least 3 characters",
+  },
+  maxLength: {
+    value: 50,
+    message: "Full name must not exceed 50 characters",
+  },
+};
+
 // DIVIDER
 export const validationCurrentJobTitle = {
-  required: "Job title is required",
   minLength: {
     value: 2,
     message: "Job title must be at least 2 characters",
@@ -60,6 +73,26 @@ export const validationCurrentJobTitle = {
   pattern: {
     value: /^[a-zA-Z\s.'-]+$/,
     message: "Only letters, spaces, periods, apostrophes, and hyphens allowed",
+  },
+};
+
+export const validationEmploymentStatus = {};
+
+export const validationCompanyName = {
+  minLength: {
+    value: 3,
+    message: "Company name must be at least 3 characters",
+  },
+  maxLength: {
+    value: 50,
+    message: "Company name must not exceed 50 characters",
+  },
+};
+
+export const validationYoe = {
+  max: {
+    value: 100,
+    message: "Experience must not exceed 100 years",
   },
 };
 

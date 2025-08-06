@@ -4,8 +4,22 @@ export interface IFormData {
   confirmPassword: string;
   gender: "Male" | "Female" | "Other";
   dob: string | null;
+
   phoneNum: string;
+  alternatePhoneNum: string;
+  addressLine1: string;
+  addressLine2: string;
+  country: string;
+  city: string;
+  postalCode: string;
+
   currentJobTitle: string;
+  employmentStatus: "Employed" | "Unemployed" | "Student";
+  companyName: string;
+  yearsOfExperience: number;
+  resume: File | null;
+
   monthlyIncome: number;
+
   preferredContact: "Email" | "Phone" | "SMS";
 }

@@ -8,8 +8,17 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ["newForm/setDob"],
+        ignoredActions: ["newForm/setDob", "newForm/resume"],
       },
+      ignoredPaths: [
+        "newFormSliceReducer.formData.dob",
+        "newFormSliceReducer.formData.resume",
+      ],
+      ignoredActionPaths: [
+        "payload.dob",
+        "payload.resume",
+        "payload.resume.file",
+      ],
     }),
 });
 

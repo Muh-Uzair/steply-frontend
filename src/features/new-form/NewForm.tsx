@@ -21,7 +21,7 @@ const NewForm: React.FC = () => {
 
   // JSX
   return (
-    <div className="flex-col space-y-4 laptopM:w-[800px] w-full ">
+    <div className="flex-col space-y-4 laptopM:w-[800px] max-w-[800px] w-full ">
       <section>
         <span className="font-bold text-2xl">Fill up the form</span>
       </section>
