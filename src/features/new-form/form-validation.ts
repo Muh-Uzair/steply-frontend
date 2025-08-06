@@ -1,3 +1,4 @@
+// DIVIDER
 export const validationFullname = {
   required: "Fullname is required",
   minLength: {
@@ -15,6 +16,19 @@ export const validationFullname = {
   },
 };
 
+export const validationPassword = {
+  required: "Password is required",
+  minLength: {
+    value: 6,
+    message: "Password must be at least 6 characters",
+  },
+};
+
+export const validationGender = {
+  required: "Please select your gender",
+};
+
+// DIVIDER
 export const validationPhoneNum = {
   required: "Phone number is required",
   minLength: {
@@ -32,6 +46,7 @@ export const validationPhoneNum = {
   },
 };
 
+// DIVIDER
 export const validationCurrentJobTitle = {
   required: "Job title is required",
   minLength: {
@@ -48,6 +63,7 @@ export const validationCurrentJobTitle = {
   },
 };
 
+// DIVIDER
 export const validationMonthlyIncome = {
   required: "Monthly income is required",
   min: {
@@ -60,6 +76,7 @@ export const validationMonthlyIncome = {
   },
 };
 
+// DIVIDER
 export const validationPreferences = {
   required: "Please select a preferred contact method",
 };

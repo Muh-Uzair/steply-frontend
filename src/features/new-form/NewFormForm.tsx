@@ -15,7 +15,9 @@ import { Input } from "@/components/ui/input";
 import {
   validationCurrentJobTitle,
   validationFullname,
+  validationGender,
   validationMonthlyIncome,
+  validationPassword,
   validationPhoneNum,
   validationPreferences,
 } from "./form-validation";
@@ -95,6 +97,95 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                           }}
                         />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  rules={validationPassword}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e); // Update the form
+                            // dispatch(fullName({ fullName: e.target.value })); // Update Redux
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  rules={{
+                    required: "Please confirm your password",
+                    validate: (value) =>
+                      value === form.getValues("password") ||
+                      "Passwords do not match",
+                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e); // Update the form
+                            // dispatch(fullName({ fullName: e.target.value })); // Update Redux
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="gender"
+                  rules={validationGender}
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Gender</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                          }}
+                          value={field.value}
+                        >
+                          {["Male", "Female", "Other"].map((val, i) => (
+                            <div
+                              key={i}
+                              className="flex items-center space-x-2"
+                            >
+                              <RadioGroupItem value={val} id={val} />
+                              <Label htmlFor={val}>{val}</Label>
+                            </div>
+                          ))}
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dob"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Date of birth</FormLabel>
+                      <FormControl></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

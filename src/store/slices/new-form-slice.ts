@@ -5,6 +5,10 @@ const initialState: INewFormSlice = {
   step: 1,
   formData: {
     fullName: "",
+    password: "",
+    confirmPassword: "",
+    gender: "Male",
+    dob: "",
     phoneNum: "",
     currentJobTitle: "",
     monthlyIncome: 0,
