@@ -3,7 +3,7 @@ export interface IFormData {
   password: string;
   confirmPassword: string;
   gender: "Male" | "Female" | "Other";
-  dob: "";
+  dob: string | null;
   phoneNum: string;
   currentJobTitle: string;
   monthlyIncome: number;

@@ -5,6 +5,12 @@ const store = configureStore({
   reducer: {
     newFormSliceReducer: newFormSliceReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ["newForm/setDob"],
+      },
+    }),
 });
 
 export default store;

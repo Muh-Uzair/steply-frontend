@@ -38,11 +38,24 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import {
   fullName,
+  password,
+  confirmPassword,
+  gender,
+  setDob,
   phoneNum,
   currentJobTitle,
   monthlyIncome,
   preferredContact,
 } from "@/store/slices/new-form-slice";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface INewFormForm {
   step: number;
@@ -70,7 +83,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
     <Card className="mt-[30px]">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          {/* DIVIDER */}
+          {/* DIVIDER  */}
           {(step === 1 || step === 6) && (
             <section>
               <CardHeader>
@@ -86,7 +99,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                   rules={validationFullname}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Fullname</FormLabel>
+                      <FormLabel>Full Name</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter your name"
@@ -114,8 +127,8 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                           placeholder="••••••••"
                           {...field}
                           onChange={(e) => {
-                            field.onChange(e); // Update the form
-                            // dispatch(fullName({ fullName: e.target.value })); // Update Redux
+                            field.onChange(e);
+                            dispatch(password({ password: e.target.value }));
                           }}
                         />
                       </FormControl>
@@ -134,15 +147,19 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                   }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Confirm password</FormLabel>
+                      <FormLabel>Confirm Password</FormLabel>
                       <FormControl>
                         <Input
                           type="password"
                           placeholder="••••••••"
                           {...field}
                           onChange={(e) => {
-                            field.onChange(e); // Update the form
-                            // dispatch(fullName({ fullName: e.target.value })); // Update Redux
+                            field.onChange(e);
+                            dispatch(
+                              confirmPassword({
+                                confirmPassword: e.target.value,
+                              })
+                            );
                           }}
                         />
                       </FormControl>
@@ -161,6 +178,11 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                         <RadioGroup
                           onValueChange={(value) => {
                             field.onChange(value);
+                            dispatch(
+                              gender({
+                                gender: value,
+                              })
+                            );
                           }}
                           value={field.value}
                         >
@@ -179,13 +201,50 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="dob"
                   render={({ field }) => (
                     <FormItem className="space-y-3">
-                      <FormLabel>Date of birth</FormLabel>
-                      <FormControl></FormControl>
+                      <FormLabel>Date Of Birth</FormLabel>
+                      <FormControl>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              captionLayout="dropdown"
+                              mode="single"
+                              selected={
+                                field.value ? new Date(field.value) : undefined
+                              }
+                              onSelect={(date) => {
+                                field.onChange(date);
+                                dispatch(setDob({ dob: date }));
+                              }}
+                              disabled={(date) =>
+                                date > new Date() ||
+                                date < new Date("1900-01-01")
+                              }
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -208,7 +267,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                   rules={validationPhoneNum}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone number</FormLabel>
+                      <FormLabel>Phone Number</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Phone number"
@@ -243,7 +302,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                   rules={validationCurrentJobTitle}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Current job title</FormLabel>
+                      <FormLabel>Current Job Title</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="e.g., Software Engineer"
@@ -324,7 +383,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                   rules={validationPreferences}
                   render={({ field }) => (
                     <FormItem className="space-y-3">
-                      <FormLabel>Preferred mode of contact</FormLabel>
+                      <FormLabel>Preferred Mode Of Contact</FormLabel>
                       <FormControl>
                         <RadioGroup
                           onValueChange={(value) => {

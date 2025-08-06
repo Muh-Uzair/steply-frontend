@@ -1,18 +1,18 @@
 // DIVIDER
 export const validationFullname = {
-  required: "Fullname is required",
+  required: "Full name is required",
   minLength: {
     value: 3,
-    message: "Fullname must be at least 3 characters",
+    message: "Full name must be at least 3 characters",
   },
   maxLength: {
-    value: 20,
-    message: "Fullname must not exceed 20 characters",
+    value: 50,
+    message: "Full name must not exceed 50 characters",
   },
   pattern: {
-    value: /^[a-zA-Z0-9_-]+$/,
+    value: /^[a-zA-Z0-9 _-]+$/, // <-- notice the added space after 9
     message:
-      "Username can only contain letters, numbers, hyphens, and underscores",
+      "Full name can only contain letters, numbers, spaces, hyphens, and underscores",
   },
 };
 

@@ -8,7 +8,7 @@ const initialState: INewFormSlice = {
     password: "",
     confirmPassword: "",
     gender: "Male",
-    dob: "",
+    dob: null,
     phoneNum: "",
     currentJobTitle: "",
     monthlyIncome: 0,
@@ -29,6 +29,19 @@ const newFormSlice = createSlice({
     fullName: (state, action) => {
       state.formData.fullName = action.payload.fullName;
     },
+    password: (state, action) => {
+      state.formData.password = action.payload.password;
+    },
+    confirmPassword: (state, action) => {
+      state.formData.confirmPassword = action.payload.confirmPassword;
+    },
+    gender: (state, action) => {
+      state.formData.gender = action.payload.gender;
+    },
+    setDob: (state, action) => {
+      const date: Date | undefined = new Date(action.payload.dob);
+      state.formData.dob = date ? new Date(date).toISOString() : null;
+    },
     phoneNum: (state, action) => {
       state.formData.phoneNum = action.payload.phoneNum;
     },
@@ -48,6 +61,10 @@ export const {
   incrementStep,
   decrementStep,
   fullName,
+  password,
+  confirmPassword,
+  gender,
+  setDob,
   phoneNum,
   currentJobTitle,
   monthlyIncome,
