@@ -59,7 +59,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
   }
 
   return (
-    <Card>
+    <Card className="mt-[30px]">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {/* DIVIDER */}
@@ -231,7 +231,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
 
           {/* DIVIDER */}
           {step === 6 && (
-            <CardFooter>
+            <CardFooter className="pt-[30px]">
               <Button className="w-full laptopM:w-auto" type="submit">
                 Submit
               </Button>
