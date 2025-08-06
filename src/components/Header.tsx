@@ -27,7 +27,7 @@ const Header: React.FC = () => {
 
   // JSX
   return (
-    <header className="h-[50px] p-[10px] laptopM:hidden bg-stone-100 flex items-center justify-between border-b-[1px] border-primary">
+    <header className="h-[50px] p-[10px] z-30 laptopM:hidden fixed top-0 left-0 right-0 bg-stone-100 flex items-center justify-between border-b-[1px] border-primary">
       <div>
         <SteplyLogo />
       </div>

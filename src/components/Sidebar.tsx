@@ -16,7 +16,7 @@ const Sidebar: React.FC = () => {
 
   // JSX
   return (
-    <aside className="bg-primary laptopM:w-[200px] tab:block fixed laptopM:top-[0px] top-[50px] bottom-0 left-0 hidden w-[80px] p-[10px]">
+    <aside className="bg-primary/90 laptopM:w-[250px] tab:block fixed laptopM:top-[0px] top-[50px] bottom-0 left-0 hidden w-[80px] p-[10px]">
       <section className="laptopM:flex justify-center items-center p-[20px] hidden">
         <SteplyLogo />
       </section>
