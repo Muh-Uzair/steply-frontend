@@ -17,6 +17,7 @@ import {
   validationFullname,
   validationMonthlyIncome,
   validationPhoneNum,
+  validationPreferences,
 } from "./form-validation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -29,35 +30,40 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { IFormData } from "@/types/new-form-types";
+import { AppDispatch, RootState } from "@/store";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import {
+  fullName,
+  phoneNum,
+  currentJobTitle,
+  monthlyIncome,
+  preferredContact,
+} from "@/store/slices/new-form-slice";
 
 interface INewFormForm {
   step: number;
 }
 
-interface IFormData {
-  fullName: string;
-  phoneNum: string;
-  currentJobTitle: string;
-  monthlyIncome: number;
-  preferredContact: "Email" | "Phone" | "SMS";
-}
-
+// CMP CMP CMP
 const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
+  // VARS
+  const dispatch = useDispatch<AppDispatch>();
+  const { formData } = useSelector(
+    (state: RootState) => state.newFormSliceReducer
+  );
   const form = useForm<IFormData>({
-    defaultValues: {
-      fullName: "",
-      phoneNum: "",
-      currentJobTitle: "",
-      monthlyIncome: 0,
-      preferredContact: "Email",
-    },
+    defaultValues: formData,
     mode: "onChange",
   });
 
+  // FUNCTION
   function onSubmit(values: IFormData) {
     console.log(values);
   }
 
+  // JSX JSX JSX
   return (
     <Card className="mt-[30px]">
       <Form {...form}>
@@ -80,7 +86,14 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                     <FormItem>
                       <FormLabel>Fullname</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your name" {...field} />
+                        <Input
+                          placeholder="Enter your name"
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e); // Update the form
+                            dispatch(fullName({ fullName: e.target.value })); // Update Redux
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -106,7 +119,14 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                     <FormItem>
                       <FormLabel>Phone number</FormLabel>
                       <FormControl>
-                        <Input placeholder="Phone number" {...field} />
+                        <Input
+                          placeholder="Phone number"
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            dispatch(phoneNum({ phoneNum: e.target.value }));
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -137,6 +157,14 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                         <Input
                           placeholder="e.g., Software Engineer"
                           {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            dispatch(
+                              currentJobTitle({
+                                currentJobTitle: e.target.value,
+                              })
+                            );
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -169,13 +197,16 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                           type="number"
                           placeholder="Enter your monthly income"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(
+                          value={field.value === 0 ? "" : field.value} // Display empty string instead of 0
+                          onChange={(e) => {
+                            const value =
                               e.target.value === ""
-                                ? ""
-                                : parseFloat(e.target.value)
-                            )
-                          }
+                                ? 0
+                                : parseFloat(e.target.value);
+
+                            field.onChange(value);
+                            dispatch(monthlyIncome({ monthlyIncome: value }));
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -199,15 +230,20 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                 <FormField
                   control={form.control}
                   name="preferredContact"
-                  rules={{
-                    required: "Please select a preferred contact method",
-                  }}
+                  rules={validationPreferences}
                   render={({ field }) => (
                     <FormItem className="space-y-3">
                       <FormLabel>Preferred mode of contact</FormLabel>
                       <FormControl>
                         <RadioGroup
-                          onValueChange={field.onChange}
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            dispatch(
+                              preferredContact({
+                                preferredContact: value,
+                              })
+                            );
+                          }}
                           value={field.value}
                         >
                           {["Email", "Phone", "SMS"].map((val, i) => (

@@ -59,3 +59,7 @@ export const validationMonthlyIncome = {
     message: "Monthly income must not exceed 1,000,000",
   },
 };
+
+export const validationPreferences = {
+  required: "Please select a preferred contact method",
+};
