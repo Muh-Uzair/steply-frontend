@@ -25,4 +25,6 @@ export interface IFormData {
   creditScore: number;
 
   preferredContact: "Email" | "Phone" | "SMS";
+  hobbies: string[];
+  newsLetterSubscription: boolean;
 }

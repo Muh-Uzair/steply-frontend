@@ -30,6 +30,8 @@ const initialState: INewFormSlice = {
     creditScore: 0,
 
     preferredContact: "Email",
+    hobbies: [],
+    newsLetterSubscription: false,
   },
 };
 
@@ -111,6 +113,13 @@ const newFormSlice = createSlice({
     preferredContact: (state, action) => {
       state.formData.preferredContact = action.payload.preferredContact;
     },
+    hobbies: (state, action) => {
+      state.formData.hobbies = action.payload.hobbies;
+    },
+    newsLetterSubscription: (state, action) => {
+      state.formData.newsLetterSubscription =
+        action.payload.newsLetterSubscription;
+    },
   },
 });
 
@@ -142,5 +151,7 @@ export const {
   creditScore,
 
   preferredContact,
+  hobbies,
+  newsLetterSubscription,
 } = newFormSlice.actions;
 export default newFormSlice.reducer;

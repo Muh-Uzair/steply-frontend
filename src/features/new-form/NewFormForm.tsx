@@ -67,6 +67,8 @@ import {
   loanAmount,
   creditScore,
   preferredContact,
+  hobbies,
+  newsLetterSubscription,
 } from "@/store/slices/new-form-slice";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
@@ -86,6 +88,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface INewFormForm {
   step: number;
@@ -432,7 +435,9 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                             <SelectValue placeholder="Select your country" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Pakistan">Pakistan</SelectItem>
+                            <SelectItem defaultChecked value="Pakistan">
+                              Pakistan
+                            </SelectItem>
                             <SelectItem value="India">India</SelectItem>
                             <SelectItem value="Iran">Iran</SelectItem>
                           </SelectContent>
@@ -464,7 +469,9 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                             <SelectValue placeholder="Select your city" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Sialkot">Sialkot</SelectItem>
+                            <SelectItem defaultChecked value="Sialkot">
+                              Sialkot
+                            </SelectItem>
                             <SelectItem value="Peshawar">Peshawar</SelectItem>
                             <SelectItem value="Islamabad">Islamabad</SelectItem>
                           </SelectContent>
@@ -910,6 +917,93 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                         </RadioGroup>
                       </FormControl>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="hobbies"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel className="text-base">
+                        Select Your Hobbies
+                      </FormLabel>
+                      {["Sports", "Music", "Reading"].map((item, i) => (
+                        <FormField
+                          key={i}
+                          control={form.control}
+                          name="hobbies"
+                          render={({ field }) => {
+                            return (
+                              <FormItem key={i}>
+                                <div className="flex gap-2">
+                                  <div>
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(item)}
+                                        onCheckedChange={(checked) => {
+                                          const newValue = checked
+                                            ? [...(field.value || []), item]
+                                            : (field.value || []).filter(
+                                                (value: string) =>
+                                                  value !== item,
+                                              );
+
+                                          field.onChange(newValue); // update form state
+                                          dispatch(
+                                            hobbies({ hobbies: newValue }),
+                                          ); // update Redux
+                                        }}
+                                      />
+                                    </FormControl>
+                                  </div>
+                                  <div>
+                                    <span className="text-[15px] font-medium">
+                                      {item}
+                                    </span>
+                                  </div>
+                                </div>
+                              </FormItem>
+                            );
+                          }}
+                        />
+                      ))}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="newsLetterSubscription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base">
+                        Want To Subscribe To Our News Letter?
+                      </FormLabel>
+                      <div className="flex gap-2">
+                        <div>
+                          {" "}
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={(value) => {
+                                field.onChange(value);
+                                dispatch(
+                                  newsLetterSubscription({
+                                    newsLetterSubscription: value,
+                                  }),
+                                );
+                              }}
+                            />
+                          </FormControl>
+                        </div>
+                        <div>
+                          {" "}
+                          <span className="text-[15px] font-medium">
+                            Subscribe to our newsletter
+                          </span>
+                        </div>
+                      </div>
                     </FormItem>
                   )}
                 />
