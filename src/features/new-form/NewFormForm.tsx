@@ -17,10 +17,12 @@ import {
   validationCity,
   validationCompanyName,
   validationCountry,
+  validationCreditScore,
   validationCurrentJobTitle,
   validationDob,
   validationFullname,
   validationGender,
+  validationLoanStatus,
   validationMonthlyIncome,
   validationPassword,
   validationPhoneNum,
@@ -61,6 +63,9 @@ import {
   companyName,
   yearsOfExperience,
   monthlyIncome,
+  loanStatus,
+  loanAmount,
+  creditScore,
   preferredContact,
 } from "@/store/slices/new-form-slice";
 import { CalendarIcon } from "lucide-react";
@@ -91,7 +96,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
   // VARS
   const dispatch = useDispatch<AppDispatch>();
   const { formData } = useSelector(
-    (state: RootState) => state.newFormSliceReducer
+    (state: RootState) => state.newFormSliceReducer,
   );
   const form = useForm<IFormData>({
     defaultValues: formData,
@@ -189,7 +194,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                             dispatch(
                               confirmPassword({
                                 confirmPassword: e.target.value,
-                              })
+                              }),
                             );
                           }}
                         />
@@ -214,7 +219,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                             dispatch(
                               gender({
                                 gender: value,
-                              })
+                              }),
                             );
                           }}
                           value={field.value}
@@ -251,7 +256,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                               variant={"outline"}
                               className={cn(
                                 "w-full justify-start text-left font-normal",
-                                !field.value && "text-muted-foreground"
+                                !field.value && "text-muted-foreground",
                               )}
                             >
                               <CalendarIcon className="mr-2 h-4 w-4" />
@@ -342,7 +347,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                             dispatch(
                               alternatePhoneNum({
                                 alternatePhoneNum: e.target.value,
-                              })
+                              }),
                             );
                           }}
                         />
@@ -370,7 +375,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                           onChange={(e) => {
                             field.onChange(e); // Update the form
                             dispatch(
-                              addressLine1({ addressLine1: e.target.value })
+                              addressLine1({ addressLine1: e.target.value }),
                             );
                           }}
                         />
@@ -397,7 +402,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                           onChange={(e) => {
                             field.onChange(e);
                             dispatch(
-                              addressLine2({ addressLine2: e.target.value })
+                              addressLine2({ addressLine2: e.target.value }),
                             );
                           }}
                         />
@@ -485,7 +490,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                           onChange={(e) => {
                             field.onChange(e);
                             dispatch(
-                              postalCode({ postalCode: e.target.value })
+                              postalCode({ postalCode: e.target.value }),
                             );
                           }}
                         />
@@ -540,7 +545,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                             dispatch(
                               currentJobTitle({
                                 currentJobTitle: e.target.value,
-                              })
+                              }),
                             );
                           }}
                         />
@@ -570,7 +575,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                           onValueChange={(value) => {
                             field.onChange(value);
                             dispatch(
-                              employmentStatus({ employmentStatus: value })
+                              employmentStatus({ employmentStatus: value }),
                             );
                           }}
                           value={field.value}
@@ -623,7 +628,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                             dispatch(
                               companyName({
                                 currentJobTitle: e.target.value,
-                              })
+                              }),
                             );
                           }}
                         />
@@ -668,7 +673,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
 
                             field.onChange(value);
                             dispatch(
-                              yearsOfExperience({ yearsOfExperience: value })
+                              yearsOfExperience({ yearsOfExperience: value }),
                             );
                           }}
                         />
@@ -726,7 +731,10 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                   rules={validationMonthlyIncome}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Monthly Income</FormLabel>
+                      <FormLabel>
+                        Monthly Income
+                        <RequiredFieldAsterisk />
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -741,6 +749,115 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
 
                             field.onChange(value);
                             dispatch(monthlyIncome({ monthlyIncome: value }));
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="loanStatus"
+                  rules={validationLoanStatus}
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>
+                        Loan Status <RequiredFieldAsterisk />{" "}
+                      </FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            dispatch(
+                              loanStatus({
+                                loanStatus: value,
+                              }),
+                            );
+                          }}
+                          value={field.value}
+                        >
+                          {["Yes", "No"].map((val, i) => (
+                            <div
+                              key={i}
+                              className="flex items-center space-x-2"
+                            >
+                              <RadioGroupItem value={val} id={val} />
+                              <Label htmlFor={val}>{val}</Label>
+                            </div>
+                          ))}
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="loanAmount"
+                  rules={{
+                    validate: (value) => {
+                      if (formData.loanStatus === "Yes") {
+                        if (!value || value === 0) {
+                          return "Loan amount is required when loan status is 'Yes'";
+                        }
+                        if (value < 1000) {
+                          return "Loan amount must be at least 1,000";
+                        }
+                        if (value > 1000000) {
+                          return "Loan amount must not exceed 1,000,000";
+                        }
+                      }
+                      return true;
+                    },
+                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Loan amount</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={formData.loanStatus === "No"}
+                          type="number"
+                          placeholder="e.g., 5000"
+                          {...field}
+                          value={field.value === 0 ? "" : field.value}
+                          onChange={(e) => {
+                            const value =
+                              e.target.value === ""
+                                ? 0
+                                : parseFloat(e.target.value);
+
+                            field.onChange(value);
+                            dispatch(loanAmount({ loanAmount: value }));
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="creditScore"
+                  rules={validationCreditScore}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Credit Score</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="e.g., 250"
+                          {...field}
+                          value={field.value === 0 ? "" : field.value}
+                          onChange={(e) => {
+                            const value =
+                              e.target.value === ""
+                                ? 0
+                                : parseFloat(e.target.value);
+
+                            field.onChange(value);
+                            dispatch(creditScore({ creditScore: value }));
                           }}
                         />
                       </FormControl>
@@ -776,7 +893,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                             dispatch(
                               preferredContact({
                                 preferredContact: value,
-                              })
+                              }),
                             );
                           }}
                           value={field.value}
@@ -803,7 +920,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
           {/* DIVIDER */}
           {step === 6 && (
             <CardFooter className="pt-[30px]">
-              <Button className="w-full laptopM:w-auto" type="submit">
+              <Button className="laptopM:w-auto w-full" type="submit">
                 Submit
               </Button>
             </CardFooter>

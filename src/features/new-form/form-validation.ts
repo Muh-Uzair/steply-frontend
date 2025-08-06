@@ -144,6 +144,21 @@ export const validationMonthlyIncome = {
     message: "Monthly income must not exceed 1,000,000",
   },
 };
+export const validationLoanStatus = {
+  required: "Please select your loan status",
+};
+
+export const validationCreditScore = {
+  required: "Credit score is required",
+  min: {
+    value: 1,
+    message: "Credit score must be greater than 0",
+  },
+  max: {
+    value: 1000000,
+    message: "Credit score must not exceed 1,000,000",
+  },
+};
 
 // DIVIDER
 export const validationPreferences = {

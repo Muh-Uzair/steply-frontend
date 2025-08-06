@@ -20,6 +20,9 @@ export interface IFormData {
   resume: File | null;
 
   monthlyIncome: number;
+  loanStatus: "Yes" | "No";
+  loanAmount: number;
+  creditScore: number;
 
   preferredContact: "Email" | "Phone" | "SMS";
 }

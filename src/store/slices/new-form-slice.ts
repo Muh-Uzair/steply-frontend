@@ -25,6 +25,9 @@ const initialState: INewFormSlice = {
     resume: null,
 
     monthlyIncome: 0,
+    loanStatus: "No",
+    loanAmount: 0,
+    creditScore: 0,
 
     preferredContact: "Email",
   },
@@ -95,6 +98,16 @@ const newFormSlice = createSlice({
     monthlyIncome: (state, action) => {
       state.formData.monthlyIncome = Number(action.payload.monthlyIncome);
     },
+    loanStatus: (state, action) => {
+      state.formData.loanStatus = action.payload.loanStatus;
+    },
+    loanAmount: (state, action) => {
+      state.formData.loanAmount = Number(action.payload.loanAmount);
+    },
+    creditScore: (state, action) => {
+      state.formData.creditScore = Number(action.payload.creditScore);
+    },
+
     preferredContact: (state, action) => {
       state.formData.preferredContact = action.payload.preferredContact;
     },
@@ -124,6 +137,10 @@ export const {
   yearsOfExperience,
 
   monthlyIncome,
+  loanStatus,
+  loanAmount,
+  creditScore,
+
   preferredContact,
 } = newFormSlice.actions;
 export default newFormSlice.reducer;
