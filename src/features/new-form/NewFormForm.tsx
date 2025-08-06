@@ -14,7 +14,9 @@ import {
 import { Input } from "@/components/ui/input";
 import {
   validationAddress,
+  validationCity,
   validationCompanyName,
+  validationCountry,
   validationCurrentJobTitle,
   validationDob,
   validationFullname,
@@ -22,6 +24,7 @@ import {
   validationMonthlyIncome,
   validationPassword,
   validationPhoneNum,
+  validationPostalCode,
   validationPreferences,
   validationYoe,
 } from "./form-validation";
@@ -50,6 +53,9 @@ import {
   phoneNum,
   addressLine1,
   addressLine2,
+  country,
+  city,
+  postalCode,
   currentJobTitle,
   employmentStatus,
   companyName,
@@ -381,7 +387,8 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Country <RequiredFieldAsterisk />
+                        Address Line 2
+                        <OptionalFieldLabel />
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -401,24 +408,62 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                 />
                 <FormField
                   control={form.control}
-                  name="addressLine2"
-                  rules={validationAddress}
+                  name="country"
+                  rules={validationCountry}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Country <RequiredFieldAsterisk />
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            dispatch(country({ country: value }));
+                          }}
+                          value={field.value}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select your country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Pakistan">Pakistan</SelectItem>
+                            <SelectItem value="India">India</SelectItem>
+                            <SelectItem value="Iran">Iran</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="city"
+                  rules={validationCity}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
                         City <RequiredFieldAsterisk />
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Address Line 2"
-                          {...field}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            dispatch(
-                              addressLine2({ addressLine2: e.target.value })
-                            );
+                        <Select
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            dispatch(city({ city: value }));
                           }}
-                        />
+                          value={field.value}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select your city" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Sialkot">Sialkot</SelectItem>
+                            <SelectItem value="Peshawar">Peshawar</SelectItem>
+                            <SelectItem value="Islamabad">Islamabad</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -426,8 +471,8 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                 />
                 <FormField
                   control={form.control}
-                  name="addressLine2"
-                  rules={validationAddress}
+                  name="postalCode"
+                  rules={validationPostalCode}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
@@ -440,7 +485,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                           onChange={(e) => {
                             field.onChange(e);
                             dispatch(
-                              addressLine2({ addressLine2: e.target.value })
+                              postalCode({ postalCode: e.target.value })
                             );
                           }}
                         />
@@ -635,7 +680,16 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                 <FormField
                   control={form.control}
                   name="resume"
-                  rules={{ required: "Resume is required" }}
+                  rules={{
+                    required: "Resume is required",
+                    validate: (file) => {
+                      if (!file) return "Resume is required";
+                      if (file.type !== "application/pdf") {
+                        return "Only PDF files are allowed";
+                      }
+                      return true;
+                    },
+                  }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Upload Resume</FormLabel>

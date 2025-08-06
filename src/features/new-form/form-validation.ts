@@ -60,6 +60,42 @@ export const validationAddress = {
   },
 };
 
+export const validationCountry = {
+  required: "Country is required",
+  minLength: {
+    value: 3,
+    message: "Country name must be at least 3 characters",
+  },
+  maxLength: {
+    value: 50,
+    message: "Country name must not exceed 50 characters",
+  },
+};
+
+export const validationCity = {
+  required: "City is required",
+  minLength: {
+    value: 3,
+    message: "City name must be at least 3 characters",
+  },
+  maxLength: {
+    value: 50,
+    message: "City name must not exceed 50 characters",
+  },
+};
+
+export const validationPostalCode = {
+  required: "Postal code is required",
+  minLength: {
+    value: 3,
+    message: "Postal code must be at least 3 characters",
+  },
+  maxLength: {
+    value: 50,
+    message: "Postal code must not exceed 50 characters",
+  },
+};
+
 // DIVIDER
 export const validationCurrentJobTitle = {
   minLength: {

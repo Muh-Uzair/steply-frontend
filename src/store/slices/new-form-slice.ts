@@ -69,6 +69,15 @@ const newFormSlice = createSlice({
     addressLine2: (state, action) => {
       state.formData.addressLine2 = action.payload.addressLine2;
     },
+    country: (state, action) => {
+      state.formData.country = action.payload.country;
+    },
+    city: (state, action) => {
+      state.formData.city = action.payload.city;
+    },
+    postalCode: (state, action) => {
+      state.formData.postalCode = action.payload.postalCode;
+    },
 
     currentJobTitle: (state, action) => {
       state.formData.currentJobTitle = action.payload.currentJobTitle;
@@ -105,6 +114,9 @@ export const {
   alternatePhoneNum,
   addressLine1,
   addressLine2,
+  country,
+  city,
+  postalCode,
 
   currentJobTitle,
   employmentStatus,
