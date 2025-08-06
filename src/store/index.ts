@@ -5,6 +5,21 @@ const store = configureStore({
   reducer: {
     newFormSliceReducer: newFormSliceReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ["newForm/setDob", "newForm/resume"],
+      },
+      ignoredPaths: [
+        "newFormSliceReducer.formData.dob",
+        "newFormSliceReducer.formData.resume",
+      ],
+      ignoredActionPaths: [
+        "payload.dob",
+        "payload.resume",
+        "payload.resume.file",
+      ],
+    }),
 });
 
 export default store;
