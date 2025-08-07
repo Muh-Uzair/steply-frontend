@@ -1,3 +1,4 @@
+// Base form data interface
 export interface IFormData {
   fullName: string;
   password: string;
@@ -17,7 +18,7 @@ export interface IFormData {
   employmentStatus: "Employed" | "Unemployed" | "Student";
   companyName: string;
   yearsOfExperience: number;
-  resume: File | null;
+  resume: File | null; // For form submission
 
   monthlyIncome: number;
   loanStatus: "Yes" | "No";
@@ -27,4 +28,32 @@ export interface IFormData {
   preferredContact: "Email" | "Phone" | "SMS";
   hobbies: string[];
   newsLetterSubscription: boolean;
+}
+
+// Interface for resume data coming from backend
+export interface IResumeData {
+  base64: string;
+  mimetype: string;
+  originalname: string;
+  size: number;
+}
+
+// Interface for form data received from backend (with processed resume)
+export interface IFormDataResponse
+  extends Omit<IFormData, "resume" | "password" | "confirmPassword"> {
+  resume: IResumeData | null;
+}
+
+// For backward compatibility
+export interface IFormDataWithId extends IFormDataResponse {
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// API Response interface
+export interface IFormsApiResponse {
+  status: "success" | "error";
+  message: string;
+  data: IFormDataWithId;
 }

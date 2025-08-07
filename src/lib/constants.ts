@@ -1,11 +1,6 @@
-import { Files, FilePlus, Home } from "lucide-react";
+import { Files, FilePlus } from "lucide-react";
 
 export const navItems = [
-  {
-    navLabel: "Home",
-    navIcon: Home,
-    navUrl: "/",
-  },
   {
     navLabel: "All Forms",
     navIcon: Files,

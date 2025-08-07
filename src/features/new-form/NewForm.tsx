@@ -9,6 +9,7 @@ import { AppDispatch, RootState } from "@/store";
 import NewFormForm from "./NewFormForm";
 import FormProgress from "./FormProgress";
 import FormStepNum from "./FormStepNum";
+import PageHeading from "@/components/PageHeading";
 
 const NewForm: React.FC = () => {
   // VARS
@@ -21,17 +22,15 @@ const NewForm: React.FC = () => {
 
   // JSX
   return (
-    <div className="flex-col space-y-4 laptopM:w-[800px] max-w-[800px] w-full ">
-      <section>
-        <span className="font-bold text-2xl">Fill up the form</span>
-      </section>
+    <div className="laptopM:w-[800px] w-full max-w-[800px] flex-col space-y-4">
+      <PageHeading>Fill up the form</PageHeading>
       <FormStepNum step={step} />
       <FormProgress step={step} />
       <NewFormForm step={step} />
-      <section className="flex justify-end tab:justify-between items-center my-[40px]">
-        <div className="hidden tab:inline align-bottom h-full ">
+      <section className="tab:justify-between my-[40px] flex items-center justify-end">
+        <div className="tab:inline hidden h-full align-bottom">
           You&apos;re currently at step{" "}
-          <span className="font-bold text-primary"> {step} </span>
+          <span className="text-primary font-bold"> {step} </span>
         </div>
         <div className="flex gap-4">
           <Button

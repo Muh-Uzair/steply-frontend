@@ -89,29 +89,79 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  useCreateNewFormMutation,
+  useUpdateExistingFromMutation,
+} from "@/store/api-slices/new-form-api-slice";
+import { ReactNode } from "react";
+import { useRouter } from "next/navigation";
 
 interface INewFormForm {
   step: number;
+  readyOnly?: boolean;
+  yourResume?: ReactNode;
+  readOnlyFormData?: IFormData;
+  updateFormData?: boolean;
+  id?: string;
 }
 
 // CMP CMP CMP
-const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
+const NewFormForm: React.FC<INewFormForm> = ({
+  step,
+  readyOnly,
+  yourResume,
+  readOnlyFormData,
+  updateFormData,
+  id,
+}) => {
   // VARS
   const dispatch = useDispatch<AppDispatch>();
   const { formData } = useSelector(
     (state: RootState) => state.newFormSliceReducer,
   );
   const form = useForm<IFormData>({
-    defaultValues: formData,
+    defaultValues: readyOnly ? readOnlyFormData : formData,
     mode: "onChange",
   });
+  const [
+    createNewFormMutation,
+    { isLoading: creatingNewForm, isError: creatingNewFormError },
+  ] = useCreateNewFormMutation();
+  const [
+    updateFormMutation,
+    { isLoading: isUpdatingForm, isError: isUpdatingFormError },
+  ] = useUpdateExistingFromMutation();
+
+  const router = useRouter();
 
   // FUNCTION
-  function onSubmit(values: IFormData) {
-    console.log(values);
+  async function onSubmit(values: IFormData) {
+    console.log("Hello");
+    if (updateFormData && id) {
+      try {
+        await updateFormMutation({ id, formData: values }).unwrap();
+
+        window.location.href = "/all-forms";
+      } catch (err) {
+        console.log(`An error occurred Error`, err);
+      }
+    }
+
+    if (!updateFormData) {
+      try {
+        await createNewFormMutation(values).unwrap();
+        router.push("/all-forms");
+      } catch (err) {
+        console.log(`An error occurred Error`, err);
+      }
+    }
   }
 
   // JSX JSX JSX
+
+  if (creatingNewFormError || isUpdatingFormError) {
+    return <span>An error occurred...</span>;
+  }
   return (
     <Card className="mt-[30px]">
       <Form {...form}>
@@ -137,6 +187,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          disabled={readyOnly}
                           placeholder="Enter your name"
                           {...field}
                           onChange={(e) => {
@@ -149,63 +200,69 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  rules={validationPassword}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Password <RequiredFieldAsterisk />{" "}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          {...field}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            dispatch(password({ password: e.target.value }));
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="confirmPassword"
-                  rules={{
-                    required: "Please confirm your password",
-                    validate: (value) =>
-                      value === form.getValues("password") ||
-                      "Passwords do not match",
-                  }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Confirm Password <RequiredFieldAsterisk />{" "}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          {...field}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            dispatch(
-                              confirmPassword({
-                                confirmPassword: e.target.value,
-                              }),
-                            );
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {!readyOnly && (
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    rules={validationPassword}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Password <RequiredFieldAsterisk />{" "}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="••••••••"
+                            {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              dispatch(password({ password: e.target.value }));
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {!readyOnly && (
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    rules={{
+                      required: "Please confirm your password",
+                      validate: (value) =>
+                        value === form.getValues("password") ||
+                        "Passwords do not match",
+                    }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Confirm Password <RequiredFieldAsterisk />{" "}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="••••••••"
+                            {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              dispatch(
+                                confirmPassword({
+                                  confirmPassword: e.target.value,
+                                }),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
                 <FormField
                   control={form.control}
                   name="gender"
@@ -217,6 +274,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       </FormLabel>
                       <FormControl>
                         <RadioGroup
+                          disabled={readyOnly}
                           onValueChange={(value) => {
                             field.onChange(value);
                             dispatch(
@@ -256,6 +314,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
+                              disabled={readyOnly}
                               variant={"outline"}
                               className={cn(
                                 "w-full justify-start text-left font-normal",
@@ -320,6 +379,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          disabled={readyOnly}
                           placeholder="Phone number"
                           {...field}
                           onChange={(e) => {
@@ -343,6 +403,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          disabled={readyOnly}
                           placeholder="Alternate Phone number"
                           {...field}
                           onChange={(e) => {
@@ -373,6 +434,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          disabled={readyOnly}
                           placeholder="Address Line 1"
                           {...field}
                           onChange={(e) => {
@@ -400,6 +462,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          disabled={readyOnly}
                           placeholder="Address Line 2"
                           {...field}
                           onChange={(e) => {
@@ -425,6 +488,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       </FormLabel>
                       <FormControl>
                         <Select
+                          disabled={readyOnly}
                           onValueChange={(value) => {
                             field.onChange(value);
                             dispatch(country({ country: value }));
@@ -459,6 +523,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       </FormLabel>
                       <FormControl>
                         <Select
+                          disabled={readyOnly}
                           onValueChange={(value) => {
                             field.onChange(value);
                             dispatch(city({ city: value }));
@@ -492,6 +557,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          disabled={readyOnly}
                           placeholder="Address Line 2"
                           {...field}
                           onChange={(e) => {
@@ -543,7 +609,8 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                         <Input
                           disabled={
                             formData.employmentStatus === "Unemployed" ||
-                            formData.employmentStatus === "Student"
+                            formData.employmentStatus === "Student" ||
+                            readyOnly
                           }
                           placeholder="e.g., Software Engineer"
                           {...field}
@@ -579,6 +646,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       </FormLabel>
                       <FormControl>
                         <Select
+                          disabled={readyOnly}
                           onValueChange={(value) => {
                             field.onChange(value);
                             dispatch(
@@ -626,7 +694,8 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                         <Input
                           disabled={
                             formData.employmentStatus === "Unemployed" ||
-                            formData.employmentStatus === "Student"
+                            formData.employmentStatus === "Student" ||
+                            readyOnly
                           }
                           placeholder="e.g., FabTechSol"
                           {...field}
@@ -667,7 +736,8 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                         <Input
                           disabled={
                             formData.employmentStatus === "Unemployed" ||
-                            formData.employmentStatus === "Student"
+                            formData.employmentStatus === "Student" ||
+                            readyOnly
                           }
                           placeholder="e.g., 5"
                           {...field}
@@ -689,35 +759,38 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="resume"
-                  rules={{
-                    required: "Resume is required",
-                    validate: (file) => {
-                      if (!file) return "Resume is required";
-                      if (file.type !== "application/pdf") {
-                        return "Only PDF files are allowed";
-                      }
-                      return true;
-                    },
-                  }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Upload Resume</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            field.onChange(file || null);
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {readyOnly && yourResume}
+                {!readyOnly && (
+                  <FormField
+                    control={form.control}
+                    name="resume"
+                    rules={{
+                      required: "Resume is required",
+                      validate: (file) => {
+                        if (!file) return "Resume is required";
+                        if (file.type !== "application/pdf") {
+                          return "Only PDF files are allowed";
+                        }
+                        return true;
+                      },
+                    }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Upload Resume</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              field.onChange(file || null);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </CardContent>{" "}
             </section>
           )}
@@ -744,6 +817,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          disabled={readyOnly}
                           type="number"
                           placeholder="Enter your monthly income"
                           {...field}
@@ -774,6 +848,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       </FormLabel>
                       <FormControl>
                         <RadioGroup
+                          disabled={readyOnly}
                           onValueChange={(value) => {
                             field.onChange(value);
                             dispatch(
@@ -824,7 +899,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       <FormLabel>Loan amount</FormLabel>
                       <FormControl>
                         <Input
-                          disabled={formData.loanStatus === "No"}
+                          disabled={formData.loanStatus === "No" || readyOnly}
                           type="number"
                           placeholder="e.g., 5000"
                           {...field}
@@ -853,6 +928,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       <FormLabel>Credit Score</FormLabel>
                       <FormControl>
                         <Input
+                          disabled={readyOnly}
                           type="number"
                           placeholder="e.g., 250"
                           {...field}
@@ -895,6 +971,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                       <FormLabel>Preferred Mode Of Contact</FormLabel>
                       <FormControl>
                         <RadioGroup
+                          disabled={readyOnly}
                           onValueChange={(value) => {
                             field.onChange(value);
                             dispatch(
@@ -940,6 +1017,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                                   <div>
                                     <FormControl>
                                       <Checkbox
+                                        disabled={readyOnly}
                                         checked={field.value?.includes(item)}
                                         onCheckedChange={(checked) => {
                                           const newValue = checked
@@ -985,6 +1063,7 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
                           {" "}
                           <FormControl>
                             <Checkbox
+                              disabled={readyOnly}
                               checked={field.value}
                               onCheckedChange={(value) => {
                                 field.onChange(value);
@@ -1012,10 +1091,21 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
           )}
 
           {/* DIVIDER */}
-          {step === 6 && (
+          {step === 6 && !readyOnly && (
             <CardFooter className="pt-[30px]">
               <Button className="laptopM:w-auto w-full" type="submit">
-                Submit
+                {updateFormData && (
+                  <>
+                    {isUpdatingForm && <span>Submitting...</span>}
+                    {!isUpdatingForm && <span>Submit</span>}
+                  </>
+                )}
+                {!updateFormData && (
+                  <>
+                    {creatingNewForm && <span>Submitting...</span>}
+                    {!creatingNewForm && <span>Submit</span>}
+                  </>
+                )}
               </Button>
             </CardFooter>
           )}
