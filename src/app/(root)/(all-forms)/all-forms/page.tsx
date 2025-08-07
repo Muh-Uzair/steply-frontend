@@ -1,3 +1,4 @@
+import AllForms from "@/pages/all-forms-page/index";
 import React from "react";
 
 const Page: React.FC = () => {
@@ -6,7 +7,7 @@ const Page: React.FC = () => {
   // FUNCTIONS
 
   // JSX
-  return <div>All forms</div>;
+  return <AllForms />;
 };
 
 export default Page;
