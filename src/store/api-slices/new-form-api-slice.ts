@@ -11,7 +11,6 @@ export const newFormApiSlice = createApi({
     }),
     createNewForm: builder.mutation<FormData, IFormData>({
       query: (formData) => {
-        console.log(formData);
         const form = new FormData();
 
         // Append each field manually
@@ -44,7 +43,6 @@ export const newFormApiSlice = createApi({
         // Append hobbies as individual entries
         formData.hobbies.forEach((hobby) => form.append("hobbies", hobby));
 
-        // ✅ Append the file (if it exists)
         if (formData.resume) {
           form.append("resume", formData.resume);
         }
@@ -59,6 +57,81 @@ export const newFormApiSlice = createApi({
     getFormById: builder.query<IFormsApiResponse, string>({
       query: (id) => `/forms/${id}`,
     }),
+    updateExistingFrom: builder.mutation<
+      FormData,
+      { id: string; formData: IFormData }
+    >({
+      query: ({ id, formData }) => {
+        console.log(id, formData);
+
+        // Check if there's a file to upload
+        const hasFile = formData.resume instanceof File;
+
+        if (hasFile) {
+          // Use FormData if there's a file
+          const form = new FormData();
+
+          // Append each field manually
+          form.append("fullName", formData.fullName);
+          form.append("password", formData.password);
+          form.append("confirmPassword", formData.confirmPassword);
+          form.append("gender", formData.gender);
+          form.append("dob", formData.dob || "");
+          form.append("phoneNum", formData.phoneNum);
+          form.append("alternatePhoneNum", formData.alternatePhoneNum);
+          form.append("addressLine1", formData.addressLine1);
+          form.append("addressLine2", formData.addressLine2);
+          form.append("country", formData.country);
+          form.append("city", formData.city);
+          form.append("postalCode", formData.postalCode);
+          form.append("currentJobTitle", formData.currentJobTitle);
+          form.append("employmentStatus", formData.employmentStatus);
+          form.append("companyName", formData.companyName);
+          form.append("yearsOfExperience", String(formData.yearsOfExperience));
+          form.append("monthlyIncome", String(formData.monthlyIncome));
+          form.append("loanStatus", formData.loanStatus);
+          form.append("loanAmount", String(formData.loanAmount));
+          form.append("creditScore", String(formData.creditScore));
+          form.append("preferredContact", formData.preferredContact);
+          form.append(
+            "newsLetterSubscription",
+            String(formData.newsLetterSubscription),
+          );
+
+          // Append hobbies as individual entries
+          formData.hobbies.forEach((hobby) => form.append("hobbies", hobby));
+
+          // Append the file
+          if (formData.resume) {
+            form.append("resume", formData.resume);
+          }
+
+          return {
+            url: `/forms/${id}`,
+            method: "PUT",
+            body: form,
+          };
+        } else {
+          // Use JSON if no file upload
+          const { ...updateData } = formData;
+
+          return {
+            url: `/forms/${id}`,
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updateData),
+          };
+        }
+      },
+    }),
+    deleteFormById: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/forms/${id}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -66,4 +139,6 @@ export const {
   useGetAllFormsQuery,
   useCreateNewFormMutation,
   useGetFormByIdQuery,
+  useUpdateExistingFromMutation,
+  useDeleteFormByIdMutation,
 } = newFormApiSlice;

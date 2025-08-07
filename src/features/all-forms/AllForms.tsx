@@ -37,9 +37,8 @@ const AllForms: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="laptopM:w-[800px] w-full max-w-[800px] flex-col space-y-4">
       <PageHeading>All Forms</PageHeading>
-
       <div className="mt-6 space-y-4">
         {allForms.map((form) => (
           <Card key={form._id} className="border shadow-sm">

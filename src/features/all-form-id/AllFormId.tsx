@@ -2,12 +2,20 @@
 
 import ErrorScreen from "@/components/ErrorScreen";
 import LoadingSpinnerScreen from "@/components/LoadingSpinnerScreen";
-import { AppDispatch } from "@/store";
-import { useGetFormByIdQuery } from "@/store/api-slices/new-form-api-slice";
+import { AppDispatch, RootState } from "@/store";
+import {
+  useDeleteFormByIdMutation,
+  useGetFormByIdQuery,
+} from "@/store/api-slices/new-form-api-slice";
 import { setStepAndFormData } from "@/store/slices/new-form-slice";
 import { IFormDataWithId, IResumeData } from "@/types/new-form-types";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import NewFormForm from "../new-form/NewFormForm";
+import { useSelector } from "react-redux";
+import PageHeading from "@/components/PageHeading";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 interface Props {
   id: string;
@@ -19,9 +27,21 @@ const AllFormId: React.FC<Props> = ({ id }) => {
     data,
     isLoading: isLoadingForms,
     isError: isErrorForms,
-  } = useGetFormByIdQuery(id);
+    refetch,
+  } = useGetFormByIdQuery(id, {
+    refetchOnMountOrArgChange: true,
+  });
   const formData: IFormDataWithId | undefined = data?.data;
   const dispatch = useDispatch<AppDispatch>();
+  const { step } = useSelector((state: RootState) => state.newFormSliceReducer);
+  const [readyOnly, setReadyOnly] = useState(true);
+  const [deleteFormMutation] = useDeleteFormByIdMutation();
+  const router = useRouter();
+
+  // FUNCTION
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   //FUNCTION
   useEffect(() => {
@@ -133,6 +153,20 @@ const AllFormId: React.FC<Props> = ({ id }) => {
     }
   };
 
+  // FUNCTION
+  const handleDelete = async (formId: string) => {
+    try {
+      await deleteFormMutation(formId).unwrap();
+      // Success callback - runs only on success
+      console.log("Form deleted successfully");
+      // Redirect, show toast, refresh data, etc.
+      window.location.href = "/all-forms";
+    } catch (error) {
+      // Error callback - runs only on error
+      console.error("Failed to delete form:", error);
+    }
+  };
+
   // JSX
 
   if (isErrorForms) {
@@ -145,33 +179,67 @@ const AllFormId: React.FC<Props> = ({ id }) => {
 
   if (formData) {
     return (
-      <div>
-        <div>Fullname : {formData?.fullName}</div>
-        {formData.resume && (
-          <div className="mt-4 rounded-lg bg-gray-50 p-4">
-            <h3 className="mb-2 font-semibold">Resume:</h3>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">
-                {formData.resume.originalname} (
-                {Math.round(formData.resume.size / 1024)} KB)
-              </span>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleResumeViewBlob(formData.resume!)}
-                  className="rounded bg-purple-500 px-3 py-1 text-sm text-white hover:bg-purple-600"
-                >
-                  View
-                </button>
-                <button
-                  onClick={() => handleResumeDownload(formData.resume!)}
-                  className="rounded bg-green-500 px-3 py-1 text-sm text-white hover:bg-green-600"
-                >
-                  Download
-                </button>
+      <div className="laptopM:w-[800px] w-full max-w-[800px] flex-col space-y-4 pb-[50px]">
+        <PageHeading>Your Existing Details</PageHeading>
+        <div className="w-full">
+          <Button
+            onClick={() => handleDelete(id)}
+            className="w-full"
+            variant={"destructive"}
+          >
+            Delete
+          </Button>
+        </div>
+        <div className="w-full">
+          <Button
+            onClick={() => {
+              setReadyOnly((curr) => !curr);
+            }}
+            className="w-full"
+            variant={"outline"}
+          >
+            Update My Information
+          </Button>
+        </div>
+        <NewFormForm
+          id={id}
+          updateFormData={true}
+          readOnlyFormData={{
+            ...formData,
+            resume: null,
+            password: "",
+            confirmPassword: "",
+          }}
+          step={step}
+          readyOnly={readyOnly}
+          yourResume={
+            formData.resume && (
+              <div className="mt-4 rounded-lg bg-gray-50 p-4">
+                <h3 className="mb-2 font-semibold">Resume:</h3>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-gray-600">
+                    {formData.resume.originalname} (
+                    {Math.round(formData.resume.size / 1024)} KB)
+                  </span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleResumeViewBlob(formData.resume!)}
+                      className="rounded bg-purple-500 px-3 py-1 text-sm text-white hover:bg-purple-600"
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={() => handleResumeDownload(formData.resume!)}
+                      className="rounded bg-green-500 px-3 py-1 text-sm text-white hover:bg-green-600"
+                    >
+                      Download
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            )
+          }
+        />
       </div>
     );
   }
