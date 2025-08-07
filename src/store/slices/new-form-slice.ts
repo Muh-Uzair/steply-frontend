@@ -1,5 +1,10 @@
-import { INewFormSlice } from "@/types/new-form-slice-types";
+import { IFormData } from "@/types/new-form-types";
 import { createSlice } from "@reduxjs/toolkit";
+
+interface INewFormSlice {
+  step: number;
+  formData: IFormData;
+}
 
 const initialState: INewFormSlice = {
   step: 1,

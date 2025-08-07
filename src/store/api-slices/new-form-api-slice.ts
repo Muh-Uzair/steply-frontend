@@ -1,11 +1,12 @@
-import { IFormData, IFormsApiResponse } from "@/types/new-form-types";
+import { IAllFormsResponse } from "@/types/new-form-slice-types";
+import { IFormData } from "@/types/new-form-types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const newFormApiSlice = createApi({
   reducerPath: "newFormApi",
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:4000/api/v1" }),
   endpoints: (builder) => ({
-    getAllForms: builder.query<IFormsApiResponse, void>({
+    getAllForms: builder.query<IAllFormsResponse, void>({
       query: () => "/forms",
     }),
     createNewForm: builder.mutation<FormData, IFormData>({
@@ -55,8 +56,14 @@ export const newFormApiSlice = createApi({
         };
       },
     }),
+    getFormById: builder.query({
+      query: (id) => `/forms/${id}`,
+    }),
   }),
 });
 
-export const { useGetAllFormsQuery, useCreateNewFormMutation } =
-  newFormApiSlice;
+export const {
+  useGetAllFormsQuery,
+  useCreateNewFormMutation,
+  useGetFormByIdQuery,
+} = newFormApiSlice;

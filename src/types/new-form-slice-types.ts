@@ -1,6 +1,12 @@
-import { IFormData } from "./new-form-types";
+export interface IIncomingFormFieldsAlForms {
+  _id: string;
+  fullName: string;
+  gender: "Male" | "Female" | "Other";
+  phoneNum: string;
+  country: string;
+}
 
-export interface INewFormSlice {
-  step: number;
-  formData: IFormData;
+export interface IAllFormsResponse {
+  message: "success" | "error";
+  data: IIncomingFormFieldsAlForms[];
 }
