@@ -125,6 +125,11 @@ const newFormSlice = createSlice({
       state.formData.newsLetterSubscription =
         action.payload.newsLetterSubscription;
     },
+
+    setStepAndFormData: (state, action) => {
+      state.step = 6;
+      state.formData = action.payload.formData;
+    },
   },
 });
 
@@ -158,5 +163,7 @@ export const {
   preferredContact,
   hobbies,
   newsLetterSubscription,
+
+  setStepAndFormData,
 } = newFormSlice.actions;
 export default newFormSlice.reducer;

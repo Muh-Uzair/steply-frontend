@@ -17,16 +17,9 @@ const AllForms: React.FC = () => {
 
   console.log("All forms data:", allForms);
 
-  // FUNCTIONS
+  // FUNCTION
   const handleResumeDownload = (resume: IResumeData) => {
     try {
-      console.log("Resume data for download:", {
-        originalname: resume.originalname,
-        mimetype: resume.mimetype,
-        base64Length: resume.base64?.length,
-        base64Preview: resume.base64?.substring(0, 50),
-      });
-
       // Clean base64 data (remove any whitespace/newlines)
       const cleanBase64 = resume.base64.replace(/\s/g, "");
 
@@ -71,6 +64,7 @@ const AllForms: React.FC = () => {
     }
   };
 
+  // FUNCTION
   const handleResumeViewBlob = (resume: IResumeData) => {
     try {
       // Clean base64 data

@@ -2,9 +2,12 @@
 
 import ErrorScreen from "@/components/ErrorScreen";
 import LoadingSpinnerScreen from "@/components/LoadingSpinnerScreen";
+import { AppDispatch } from "@/store";
 import { useGetFormByIdQuery } from "@/store/api-slices/new-form-api-slice";
-import { IResumeData } from "@/types/new-form-types";
-import React from "react";
+import { setStepAndFormData } from "@/store/slices/new-form-slice";
+import { IFormDataWithId, IResumeData } from "@/types/new-form-types";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 interface Props {
   id: string;
@@ -17,9 +20,30 @@ const AllFormId: React.FC<Props> = ({ id }) => {
     isLoading: isLoadingForms,
     isError: isErrorForms,
   } = useGetFormByIdQuery(id);
-  const formData = data?.data || {};
+  const formData: IFormDataWithId | undefined = data?.data;
+  const dispatch = useDispatch<AppDispatch>();
 
-  // FUNCTIONS
+  //FUNCTION
+  useEffect(() => {
+    const setFormData = () => {
+      dispatch(
+        setStepAndFormData({
+          formData: {
+            ...formData,
+            resume: null,
+            password: "",
+            confirmPassword: "",
+          },
+        }),
+      );
+    };
+
+    if (formData?.fullName) {
+      setFormData();
+    }
+  }, [formData?.fullName, dispatch, formData]);
+
+  // FUNCTION
   const handleResumeDownload = (resume: IResumeData) => {
     try {
       console.log("Resume data for download:", {
@@ -73,6 +97,7 @@ const AllFormId: React.FC<Props> = ({ id }) => {
     }
   };
 
+  // FUNCTION
   const handleResumeViewBlob = (resume: IResumeData) => {
     try {
       // Clean base64 data
@@ -110,8 +135,6 @@ const AllFormId: React.FC<Props> = ({ id }) => {
 
   // JSX
 
-  console.log(data);
-
   if (isErrorForms) {
     return <ErrorScreen />;
   }
@@ -119,36 +142,39 @@ const AllFormId: React.FC<Props> = ({ id }) => {
   if (isLoadingForms) {
     return <LoadingSpinnerScreen />;
   }
-  return (
-    <div>
-      <div>Fullname : {formData?.fullName}</div>
-      {formData.resume && (
-        <div className="mt-4 rounded-lg bg-gray-50 p-4">
-          <h3 className="mb-2 font-semibold">Resume:</h3>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">
-              {formData.resume.originalname} (
-              {Math.round(formData.resume.size / 1024)} KB)
-            </span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleResumeViewBlob(formData.resume!)}
-                className="rounded bg-purple-500 px-3 py-1 text-sm text-white hover:bg-purple-600"
-              >
-                View
-              </button>
-              <button
-                onClick={() => handleResumeDownload(formData.resume!)}
-                className="rounded bg-green-500 px-3 py-1 text-sm text-white hover:bg-green-600"
-              >
-                Download
-              </button>
+
+  if (formData) {
+    return (
+      <div>
+        <div>Fullname : {formData?.fullName}</div>
+        {formData.resume && (
+          <div className="mt-4 rounded-lg bg-gray-50 p-4">
+            <h3 className="mb-2 font-semibold">Resume:</h3>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-600">
+                {formData.resume.originalname} (
+                {Math.round(formData.resume.size / 1024)} KB)
+              </span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleResumeViewBlob(formData.resume!)}
+                  className="rounded bg-purple-500 px-3 py-1 text-sm text-white hover:bg-purple-600"
+                >
+                  View
+                </button>
+                <button
+                  onClick={() => handleResumeDownload(formData.resume!)}
+                  className="rounded bg-green-500 px-3 py-1 text-sm text-white hover:bg-green-600"
+                >
+                  Download
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+    );
+  }
 };
 
 export default AllFormId;

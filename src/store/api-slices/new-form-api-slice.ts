@@ -1,5 +1,5 @@
 import { IAllFormsResponse } from "@/types/new-form-slice-types";
-import { IFormData } from "@/types/new-form-types";
+import { IFormData, IFormsApiResponse } from "@/types/new-form-types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const newFormApiSlice = createApi({
@@ -56,7 +56,7 @@ export const newFormApiSlice = createApi({
         };
       },
     }),
-    getFormById: builder.query({
+    getFormById: builder.query<IFormsApiResponse, string>({
       query: (id) => `/forms/${id}`,
     }),
   }),

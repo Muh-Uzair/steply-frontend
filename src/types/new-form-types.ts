@@ -55,5 +55,5 @@ export interface IFormDataWithId extends IFormDataResponse {
 export interface IFormsApiResponse {
   status: "success" | "error";
   message: string;
-  data: IFormDataWithId[];
+  data: IFormDataWithId;
 }
