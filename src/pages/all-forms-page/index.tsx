@@ -1,5 +1,5 @@
-import AllForms from "@/features/all-forms/AllForms";
 import React from "react";
+import AllForms from "@/features/all-forms/AllForms";
 
 const Index: React.FC = () => {
   // VARS
