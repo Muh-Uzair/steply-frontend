@@ -1,9 +1,8 @@
 "use client";
 
-import ErrorScreen from "@/components/ErrorScreen";
 import LoadingSpinnerScreen from "@/components/LoadingSpinnerScreen";
 import { useGetAllFormsQuery } from "@/store/api-slices/new-form-api-slice";
-import { IResumeData, IFormDataWithId } from "@/types/new-form-types";
+import { IFormDataWithId, IResumeData } from "@/types/new-form-types";
 import React from "react";
 
 const AllForms: React.FC = () => {
@@ -72,6 +71,41 @@ const AllForms: React.FC = () => {
     }
   };
 
+  const handleResumeViewBlob = (resume: IResumeData) => {
+    try {
+      // Clean base64 data
+      const cleanBase64 = resume.base64.replace(/\s/g, "");
+
+      // Convert base64 to blob (same as download but for viewing)
+      const byteCharacters = atob(cleanBase64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+
+      const mimeType = resume.mimetype || "application/pdf";
+      const blob = new Blob([byteArray], { type: mimeType });
+
+      // Create object URL and open in new tab
+      const url = URL.createObjectURL(blob);
+      const newWindow = window.open(url, "_blank");
+
+      if (newWindow) {
+        // Clean up the URL after a delay to prevent memory leaks
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 60000); // 1 minute delay
+      } else {
+        alert("Popup blocked! Please allow popups for this site.");
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error("Error viewing resume (blob method):", error);
+      alert("Error viewing file with blob method.");
+    }
+  };
+
   const handleResumeView = (resume: IResumeData) => {
     try {
       console.log("Resume data for viewing:", {
@@ -89,33 +123,74 @@ const AllForms: React.FC = () => {
         throw new Error("Invalid or empty base64 data");
       }
 
-      // Create data URL for viewing with proper MIME type
+      // Ensure we have correct MIME type for PDFs
       const mimeType = resume.mimetype || "application/pdf";
+
+      // Method 1: Try iframe approach first
       const dataUrl = `data:${mimeType};base64,${cleanBase64}`;
 
-      console.log("Data URL created:", {
-        mimeType,
-        dataUrlLength: dataUrl.length,
-        dataUrlPrefix: dataUrl.substring(0, 100),
-      });
-
-      // Open in new window
-      const newWindow = window.open();
+      // Create a new window with an iframe
+      const newWindow = window.open("", "_blank");
       if (newWindow) {
-        newWindow.location.href = dataUrl;
+        newWindow.document.write(`
+          <html>
+            <head>
+              <title>${resume.originalname || "Resume"}</title>
+              <style>
+                body { margin: 0; padding: 0; }
+                iframe { width: 100%; height: 100vh; border: none; }
+                .error { padding: 20px; text-align: center; }
+                .download-btn { 
+                  padding: 10px 20px; 
+                  background: #007bff; 
+                  color: white; 
+                  border: none; 
+                  cursor: pointer; 
+                  margin: 10px;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="error">
+                <h3>PDF Viewer</h3>
+                <p>If the PDF doesn't load, try downloading it instead.</p>
+                <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
+              </div>
+              <iframe src="${dataUrl}" type="application/pdf"></iframe>
+              <script>
+                function downloadPDF() {
+                  const link = document.createElement('a');
+                  link.href = '${dataUrl}';
+                  link.download = '${resume.originalname || "resume.pdf"}';
+                  link.click();
+                }
+              </script>
+            </body>
+          </html>
+        `);
+        newWindow.document.close();
       } else {
-        // Fallback if popup is blocked
+        // Fallback: try direct data URL
         window.location.href = dataUrl;
       }
     } catch (error) {
       console.error("Error viewing resume:", error);
-      alert("Error viewing file. Please check the console for details.");
+
+      // Fallback: trigger download instead
+      alert("Unable to view PDF in browser. Downloading instead...");
+      handleResumeDownload(resume);
     }
   };
 
   // JSX
   if (isErrorForms) {
-    return <ErrorScreen />;
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="text-red-500">
+          An error occurred while fetching forms
+        </div>
+      </div>
+    );
   }
 
   if (isLoadingForms) {
@@ -172,6 +247,12 @@ const AllForms: React.FC = () => {
                       className="rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
                     >
                       View
+                    </button>
+                    <button
+                      onClick={() => handleResumeViewBlob(form.resume!)}
+                      className="rounded bg-purple-500 px-3 py-1 text-sm text-white hover:bg-purple-600"
+                    >
+                      View (Alt)
                     </button>
                     <button
                       onClick={() => handleResumeDownload(form.resume!)}
