@@ -6,8 +6,7 @@ import React from "react";
 
 const AllForms: React.FC = () => {
   // VARS
-  const { data } = useGetAllFormsQuery({});
-  const allForms = data?.data;
+  const allForms = useGetAllFormsQuery({})?.data?.data;
 
   console.log(allForms);
 

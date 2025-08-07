@@ -89,6 +89,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useCreateNewFormMutation } from "@/store/api-slices/new-form-api-slice";
 
 interface INewFormForm {
   step: number;
@@ -105,13 +106,21 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
     defaultValues: formData,
     mode: "onChange",
   });
+  const [
+    createNewFormMutation,
+    { isLoading: creatingNewForm, isError: creatingNewFormError },
+  ] = useCreateNewFormMutation();
 
   // FUNCTION
   function onSubmit(values: IFormData) {
-    console.log(values);
+    createNewFormMutation(values);
   }
 
   // JSX JSX JSX
+
+  if (creatingNewFormError) {
+    return <span>An error occurred...</span>;
+  }
   return (
     <Card className="mt-[30px]">
       <Form {...form}>
@@ -1015,7 +1024,8 @@ const NewFormForm: React.FC<INewFormForm> = ({ step }) => {
           {step === 6 && (
             <CardFooter className="pt-[30px]">
               <Button className="laptopM:w-auto w-full" type="submit">
-                Submit
+                {creatingNewForm && <span>Submitting...</span>}
+                {!creatingNewForm && <span>Submit</span>}
               </Button>
             </CardFooter>
           )}

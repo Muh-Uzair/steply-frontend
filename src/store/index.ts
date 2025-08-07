@@ -1,16 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 import newFormSliceReducer from "@/store/slices/new-form-slice";
-import { newFormApiSLice } from "./api-slices/new-form-api-slice";
+import { newFormApiSlice } from "@/store/api-slices/new-form-api-slice";
 
 const store = configureStore({
   reducer: {
     newFormSliceReducer: newFormSliceReducer,
-    [newFormApiSLice.reducerPath]: newFormApiSLice.reducer,
+    [newFormApiSlice.reducerPath]: newFormApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(newFormApiSLice.middleware),
+    }).concat(newFormApiSlice.middleware),
 });
 
 export default store;

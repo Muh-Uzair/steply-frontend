@@ -1,4 +1,4 @@
-import AllForms from "@/features/all-forms/AllForms";
+import NewForm from "@/features/new-form/NewForm";
 import React from "react";
 
 const Index: React.FC = () => {
@@ -7,7 +7,7 @@ const Index: React.FC = () => {
   // FUNCTIONS
 
   // JSX
-  return <AllForms />;
+  return <NewForm />;
 };
 
 export default Index;
